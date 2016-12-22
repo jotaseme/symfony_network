@@ -3,6 +3,8 @@
 namespace AppBundle\Controller;
 
 use AppBundle\Form\RegisterType;
+use AppBundle\Form\UserType;
+
 use BackendBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -25,12 +27,15 @@ class UserController extends Controller
      */
     public function loginAction(Request $request)
     {
+        if(is_object($this->getUser())){
+            $this->redirect('home');
+        }
         $authenticationUtils = $this->get('security.authentication_utils');
         $error = $authenticationUtils->getLastAuthenticationError();
         $lastUserName = $authenticationUtils->getLastUsername();
 
         return $this->render('AppBundle:User:login.html.twig',array(
-           'last_username'=>$lastUserName,
+            'last_username'=>$lastUserName,
             'error' => $error
         ));
     }
@@ -40,6 +45,9 @@ class UserController extends Controller
      */
     public function registerAction(Request $request)
     {
+        if(is_object($this->getUser())){
+            $this->redirect('home');
+        }
         $user = new User();
         $form = $this->createForm(RegisterType::class, $user);
         $form->handleRequest($request);
@@ -107,5 +115,59 @@ class UserController extends Controller
         }
 
         return new Response($result);
+    }
+
+    /**
+     * @Route("/settings", name="settings")
+     */
+    public function editUserAction(Request $request)
+    {
+        $user = $this->getUser();
+        $user_image = $user->getImage();
+        $form = $this->createForm(UserType::class, $user);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted()){
+            if($form->isValid()){
+                $em = $this->getDoctrine()->getManager();
+                $query = $em
+                    ->createQuery('SELECT u FROM BackendBundle:User u WHERE u.email = :email OR u.nick = :nick')
+                    ->setParameter('email', $form->get('email')->getData())
+                    ->setParameter('nick', $form->get('nick')->getData());
+
+                $user_isset = $query->getResult();
+                if(($user->getEmail()==$user_isset[0]->getEmail() && $user->getNick()==$user_isset[0]->getNick()) ||count($user_isset)==0){
+                    //upload file
+                    $file = $form['image']->getData();
+                    if(!empty($file) && $file != null){
+                        $ext = $file->guessExtension();
+                        if($ext=='jpg' || $ext=='jpeg' || $ext=='png' || $ext=='gif'){
+                            $file_name = $user->getId().'_'.time().'.'.$ext;
+                            $file->move('uploads/users',$file_name);
+                            $user->setImage($file_name);
+                        }
+                    }else{
+                        $user->setImage($user_image);
+                    }
+                    $em->persist($user);
+                    $em->flush();
+                    $status = "¡Tu perfil se ha actualizado correctamente!";
+
+
+                }else{
+                    $status = "¡Error modificando tus datos!";
+                }
+            }else{
+                $status = "¡Error modificando tus datos!";
+            }
+
+            $this->user_session->getFlashBag()
+                ->add('status',$status);
+            return $this->redirect('settings');
+        }
+
+        return $this->render('AppBundle:User:settings.html.twig',array(
+            'form' => $form->createView()
+        ));
     }
 }
