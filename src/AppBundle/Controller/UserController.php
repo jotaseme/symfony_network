@@ -57,7 +57,7 @@ class UserController extends Controller
 
                     $em->persist($user);
                     $em->flush();
-                    $status = "¡Usuario registrado correctamente!";
+                    $status = "¡El usuario registrado correctamente!";
                     $this->user_session->getFlashBag()
                         ->add('status',$status);
                     return $this->redirect("login");
