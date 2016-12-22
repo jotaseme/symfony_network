@@ -25,9 +25,14 @@ class UserController extends Controller
      */
     public function loginAction(Request $request)
     {
-       return $this->render('AppBundle:User:login.html.twig',array(
-           'titulo'=>"Login"
-       ));
+        $authenticationUtils = $this->get('security.authentication_utils');
+        $error = $authenticationUtils->getLastAuthenticationError();
+        $lastUserName = $authenticationUtils->getLastUsername();
+
+        return $this->render('AppBundle:User:login.html.twig',array(
+           'last_username'=>$lastUserName,
+            'error' => $error
+        ));
     }
 
     /**

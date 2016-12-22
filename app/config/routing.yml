@@ -8,3 +8,6 @@ app_home_page:
 
 fos_js_routing:
     resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"
+
+logout:
+    path: /logout

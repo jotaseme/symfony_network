@@ -9,8 +9,11 @@ use Symfony\Component\HttpFoundation\Request;
 class PublicationController extends Controller
 {
 
+    /**
+     * @Route("/home", name="home")
+     */
     public function indexAction(Request $request)
     {
-        echo "Accion login";die;
+        return $this->render('AppBundle:Publication:home.html.twig');
     }
 }
