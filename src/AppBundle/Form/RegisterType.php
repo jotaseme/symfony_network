@@ -38,7 +38,7 @@ class RegisterType extends AbstractType
                 'label'=> 'Nickname',
                 'required'=>'required',
                 'attr'=> array(
-                    'class'=> 'form-nick form-control nick-input'
+                    'class' => 'form-nick form-control nick-input'
                 )
 
             ))

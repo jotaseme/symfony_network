@@ -5,3 +5,6 @@ app:
 app_home_page:
     path: /
     defaults: { _controller: AppBundle:User:login }
+
+fos_js_routing:
+    resource: "@FOSJsRoutingBundle/Resources/config/routing/routing.xml"

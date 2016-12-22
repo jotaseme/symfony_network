@@ -5,7 +5,9 @@ namespace AppBundle\Controller;
 use AppBundle\Form\RegisterType;
 use BackendBundle\Entity\User;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -77,11 +79,28 @@ class UserController extends Controller
             'form'=>$form->createView()
         ));
     }
+
     /**
-     * @Route("/register", name="register")
+     * @Route("/nick_test",
+     *     options = { "expose" = true },
+     *     name="nickTest")
+     *
+     * @Method({"POST"})
      */
     public function nickTestAction(Request $request){
         $nick = $request->get("nick");
         $em = $this->getDoctrine()->getManager();
+
+        $user_repository = $em->getRepository("BackendBundle:User");
+        $user_isset = $user_repository->findOneBy(array(
+            'nick'=>$nick
+        ));
+        if(count($user_isset)>=1 && is_object($user_isset)){
+            $result = "used";
+        }else{
+            $result = "unused";
+        }
+
+        return new Response($result);
     }
 }
