@@ -1,6 +1,11 @@
 {% extends "AppBundle:Layouts:layout.html.twig" %}
 {% block javascripts %}
     {{ parent() }}
+    <script>
+        var loader = "{{ asset('assets/images/ajax-loader.gif') }}"
+    </script>
+    <script src="{{ asset('assets/js/customJS/usersJS.js') }}"></script>
+
 {% endblock %}
 {% block content %}
     <div class="container">
@@ -23,17 +28,20 @@
                             {% endif %}
                         </div>
                         <div class="user-item-content">
-                           <p>{{ user.name }} {{ user.surname }} - {{ user.nick }}</p>
+                            <p>{{ user.name }} {{ user.surname }} - {{ user.nick }}</p>
                             <p>{{ user.bio }}</p>
                         </div>
                         <div class="clearfix"></div>
                         <hr/>
                     </div>
+
                 {% endfor %}
             </div>
             <div class="navigation">
                 {{ knp_pagination_render(pagination) }}
             </div>
+            <div class="clearfix"></div>
+
         </div>
     </div>
 

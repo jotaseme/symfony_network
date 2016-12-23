@@ -1,7 +1,7 @@
 $(document).ready(function () {
 
     $(".nick-input").blur(function () {
-        var path = Routing.generate('nickTest', true)
+        var path = Routing.generate('nickTest', true);
         var nick = this.value;
         $.ajax({
             url: path,
