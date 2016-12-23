@@ -28,7 +28,7 @@ class UserController extends Controller
     public function loginAction(Request $request)
     {
         if(is_object($this->getUser())){
-            $this->redirect('home');
+            return $this->redirect('home');
         }
         $authenticationUtils = $this->get('security.authentication_utils');
         $error = $authenticationUtils->getLastAuthenticationError();
@@ -46,7 +46,7 @@ class UserController extends Controller
     public function registerAction(Request $request)
     {
         if(is_object($this->getUser())){
-            $this->redirect('home');
+            return $this->redirect('home');
         }
         $user = new User();
         $form = $this->createForm(RegisterType::class, $user);
@@ -136,7 +136,7 @@ class UserController extends Controller
                     ->setParameter('nick', $form->get('nick')->getData());
 
                 $user_isset = $query->getResult();
-                if(($user->getEmail()==$user_isset[0]->getEmail() && $user->getNick()==$user_isset[0]->getNick()) ||count($user_isset)==0){
+                if(count($user_isset) == 0 || ($user->getEmail()==$user_isset[0]->getEmail() && $user->getNick()==$user_isset[0]->getNick())){
                     //upload file
                     $file = $form['image']->getData();
                     if(!empty($file) && $file != null){
@@ -152,8 +152,6 @@ class UserController extends Controller
                     $em->persist($user);
                     $em->flush();
                     $status = "¡Tu perfil se ha actualizado correctamente!";
-
-
                 }else{
                     $status = "¡Error modificando tus datos!";
                 }
@@ -169,5 +167,24 @@ class UserController extends Controller
         return $this->render('AppBundle:User:settings.html.twig',array(
             'form' => $form->createView()
         ));
+    }
+
+    /**
+     * @Route("/users", name="users")
+     */
+    public function usersAction(Request $request){
+        $em = $this->getDoctrine()->getManager();
+        $dql = "SELECT u FROM BackendBundle:User u";
+        $query = $em->createQuery($dql);
+
+        $paginator = $this->get('knp_paginator');
+        $pagination = $paginator->paginate(
+            $query,$request->query->getInt('page',1),5
+        );
+
+        return $this->render('AppBundle:User:users.html.twig',array(
+            'pagination'=>$pagination
+        ));
+
     }
 }

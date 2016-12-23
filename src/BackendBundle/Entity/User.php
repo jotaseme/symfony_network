@@ -4,6 +4,7 @@ namespace BackendBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * User
@@ -11,7 +12,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @ORM\Table(name="users", uniqueConstraints={@ORM\UniqueConstraint(name="users_uniques_fields", columns={"email", "nick"})})
  * @ORM\Entity
  */
-class User implements UserInterface
+class User implements UserInterface, \Serializable
 {
     /**
      * @var integer
@@ -33,6 +34,13 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="email", type="string", length=255, nullable=true)
+     * @Assert\NotBlank(
+     *      message = "El email no puede estar vacio"
+     * )
+     * @Assert\Email(
+     *     message = "El email '{{ value }}' no es correcto",
+     *     checkMX = false
+     * )
      */
     private $email;
 
@@ -40,6 +48,10 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="name", type="string", length=255, nullable=true)
+     * @Assert\NotBlank(
+     *      message = "El nombre no puede estar vacio"
+     * )
+     *
      */
     private $name;
 
@@ -47,6 +59,9 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="surname", type="string", length=255, nullable=true)
+     * @Assert\NotBlank(
+     *      message = "El apellido no puede estar vacio"
+     * )
      */
     private $surname;
 
@@ -54,6 +69,7 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="password", type="string", length=255, nullable=true)
+     *
      */
     private $password;
 
@@ -61,6 +77,9 @@ class User implements UserInterface
      * @var string
      *
      * @ORM\Column(name="nick", type="string", length=50, nullable=true)
+     * @Assert\NotBlank(
+     *      message = "El nick no puede estar vacio"
+     * )
      */
     private $nick;
 
@@ -337,5 +356,38 @@ class User implements UserInterface
     public function eraseCredentials()
     {
         // TODO: Implement eraseCredentials() method.
+    }
+
+    /**
+     * String representation of object
+     * @link http://php.net/manual/en/serializable.serialize.php
+     * @return string the string representation of the object or null
+     * @since 5.1.0
+     */
+    public function serialize()
+    {
+        return $this->serialize(array(
+            $this->id,
+            $this->email,
+            $this->password
+        ));
+    }
+
+    /**
+     * Constructs the object
+     * @link http://php.net/manual/en/serializable.unserialize.php
+     * @param string $serialized <p>
+     * The string representation of the object.
+     * </p>
+     * @return void
+     * @since 5.1.0
+     */
+    public function unserialize($serialized)
+    {
+        list(
+            $this->id,
+            $this->email,
+            $this->password
+            )= unserialize($serialized);
     }
 }
