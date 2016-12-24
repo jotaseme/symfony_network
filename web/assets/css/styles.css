@@ -34,8 +34,9 @@ body{
     margin-bottom: 10px;
 }
 
-/* Gente */
-.user-item .avatar{
+/* Gente y timeline */
+.user-item .avatar,
+.publication-item .avatar{
     background: #eee;
     border-radius: 500px;
     width: 75px;
@@ -44,12 +45,124 @@ body{
     float: left;
 }
 
-.user-item .avatar img{
+.user-item .avatar img,
+.publication-item .avatar img
+{
     height: 100%;
     text-align: center;
 }
 
-.user-item .user-item-content{
+.user-item .user-item-content,
+.publication-item .publication-item-content{
     padding: 10px;
     margin-left: 85px;
+}
+.pub-date{
+    float: right;
+    font-size: 12px;
+    color:grey;
+}
+
+/* Home publicaciones*/
+#timeline{
+    margin-right: 20px;
+    min-height: 650px;
+    padding-bottom: 20px;
+}
+.box-header{
+    border-bottom: 1px solid #ccc;
+    padding: 10px;
+    padding-top: 0px;
+    font-size: 25px;
+}
+#user_card{
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+#user_card .avatar {
+    background: #eee;
+    border-radius: 500px;
+    width: 75px;
+    height: 75px;
+    overflow: hidden;
+    float: left;
+}
+
+#user_card .avatar img{
+    height: 100%;
+    text-align: center;
+}
+
+#user_card .name-surname{
+    float: left;
+    font-size: 15px;
+    padding: 10px;
+}
+
+#user_card .nickname {
+    opacity: 0.7;
+    font-size: 12px;
+}
+#user_card .following-data{
+    width: 25%;
+    float: left;
+    text-align: center;
+    border-top: 1px solid #ccc;
+    padding: 5px;
+    margin-top: 10px;
+}
+#user_card .following-data a{
+    color: #444;
+}
+
+#user_card .following-data a:hover{
+    color:#000000;
+    text-decoration: none;
+}
+
+#user_card .following-data .label-stat {
+    display: block;
+}
+
+#user_card .following-data .number-stat {
+    display: block;
+    font-size:16px;
+    font-weight: bold;
+}
+
+#new-publication input,
+#new-publication textarea{
+    margin-bottom: 10px;
+}
+
+.pub-image{
+    display: none;
+    transition: all 300ms;
+}
+
+.publication-item .glyphicon{
+    margin-right: 7px;
+    cursor: pointer;
+    color: #444444 !important;
+}
+.pub-image img{
+    width: 100%;
+    text-align: center;
+    display: block;
+    margin: 0px auto;
+}
+
+
+.like{
+    font-size: 25px;
+    margin-top: -5px;
+}
+.like .btn-like:hover{
+    color: red !important;
+    cursor: pointer;
+}
+
+.like .active{
+    color:red !important;
 }
