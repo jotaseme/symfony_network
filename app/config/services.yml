@@ -17,6 +17,7 @@ services:
               public: false
               tags:
                    - { name: twig.extension }
+
      liked.twig_extension:
               class: AppBundle\Twig\LikedExtension
               public: false
@@ -24,6 +25,14 @@ services:
                    doctrine: "@doctrine"
               tags:
                    - { name: twig.extension }
+
+     user_stats.twig_extension:
+                   class: AppBundle\Twig\UserStatsExtension
+                   public: false
+                   arguments:
+                        doctrine: "@doctrine"
+                   tags:
+                        - { name: twig.extension }
 #    service_name:
 #        class: AppBundle\Directory\ClassName
 #        arguments: ["@another_service_name", "plain_value", "%parameter_name%"]

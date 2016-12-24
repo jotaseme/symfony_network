@@ -2,7 +2,7 @@
 namespace AppBundle\Twig;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class LikedExtension extends \Twig_Extension
+class UserStatsExtension extends \Twig_Extension
 {
     protected $doctrine;
 
@@ -13,27 +13,45 @@ class LikedExtension extends \Twig_Extension
 
     public function getFilters(){
         return array(
-            new \Twig_SimpleFilter('liked',array($this, 'likedFilter'))
+            new \Twig_SimpleFilter('user_stats',array($this, 'userStatsFilter'))
         );
     }
 
-    public function likedFilter($user, $publication){
+    public function userStatsFilter($user){
         $like_repository = $this->doctrine->getRepository('BackendBundle:Like');
-        $like = $like_repository->findOneBy(array(
-           "user" => $user,
-            "publication" => $publication
+        $following_repository = $this->doctrine->getRepository('BackendBundle:Following');
+        $publication_repository = $this->doctrine->getRepository('BackendBundle:Publication');
+
+        $user_following = $following_repository->findBy(array(
+            "user" => $user
         ));
 
-        if(!empty($like) && is_object($like)){
-            $result = true;
-        }else{
-            $result = false;
-        }
+        $user_followers  = $following_repository->findBy(array(
+            "followed" => $user
+        ));
+
+        $user_publications = $publication_repository->findBy(array(
+            "user" => $user
+        ));
+
+        $user_likes = $like_repository->findBy(array(
+            "user" => $user
+        ));
+
+        $result = array(
+            'following' => count($user_following),
+            'followers' => count($user_followers),
+            'user_publications' => count($user_publications),
+            'likes' => count($user_likes)
+        );
 
         return $result;
+
+
+
     }
 
     public function getName(){
-        return 'liked_extension';
+        return 'user_stats_extension';
     }
 }
