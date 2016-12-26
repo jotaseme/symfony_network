@@ -25,7 +25,7 @@
                     </div>
                     <div class="publication-item-content">
                         <p>
-                            <a class="pub-name-link" href="#">
+                            <a class="pub-name-link" href="{{ path('user_profile',{'nickname':publication.user.nick}) }}">
                                 {{ publication.user.name }} {{ publication.user.surname }}
                             </a>
                         -
@@ -86,7 +86,7 @@
                {% endif %}
            </div>
            <div class="name-surname">
-               <a href="#">{{ app.user.name }} {{ app.user.surname }}</a>
+               <a href="{{ path('user_profile',{'nickname': app.user.nick }) }}">{{ app.user.name }} {{ app.user.surname }}</a>
                <div class="clearfix"></div>
                <span class="nickname">
                    {{ app.user.nick }}
@@ -95,7 +95,7 @@
            <div class="clearfix"></div>
             {% set user_stats = app.user|user_stats  %}
            <div class="following-data">
-               <a href="#">
+               <a href="{{ path('following_users',{'nickname':app.user.nick}) }}">
                    <span class="label-stat">
                         Siguiendo
                    </span>
@@ -105,7 +105,7 @@
                </a>
            </div>
            <div class="following-data">
-               <a href="#">
+               <a href="{{ path('follows_users',{'nickname':app.user.nick}) }}">
                    <span class="label-stat">
                         Seguidores
                    </span>
@@ -115,7 +115,7 @@
                </a>
            </div>
            <div class="following-data">
-               <a href="#">
+               <a href="{{ path('user_profile',{'nickname':app.user.nick}) }}">
                    <span class="label-stat">
                         Publicaciones
                    </span>
@@ -125,7 +125,7 @@
                </a>
            </div>
            <div class="following-data">
-               <a href="#">
+               <a href="{{ path('likes',{'nickname':app.user.nick}) }}">
                    <span class="label-stat">
                         Me gustas
                    </span>

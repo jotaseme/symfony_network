@@ -6,6 +6,7 @@ use BackendBundle\Entity\Like;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
 class LikeController extends Controller
 {
@@ -46,5 +47,43 @@ class LikeController extends Controller
         $em->flush();
         $status = '¡Dislike a publicacion!';
         return new Response($status);
+    }
+
+    /**
+     * @Route("/users/{nickname}/likes",
+     *     options = { "expose" = true },
+     *     name="likes")
+     */
+    public function likesAction(Request $request, $nickname = null){
+        $em = $this->getDoctrine()->getManager();
+        if($nickname != null){
+            $user_repository = $em->getRepository('BackendBundle:User');
+            $user = $user_repository->findOneBy(array(
+                'nick' => $nickname
+            ));
+        }else{
+            $user = $this->getUser();
+        }
+
+        if(empty($user) || !is_object($user)){
+            return $this->redirect($this->generateUrl('home'));
+        }
+
+        $user_id = $user->getId();
+
+        $dql = "SELECT l FROM BackendBundle:Like l WHERE l.user = $user_id ORDER BY l.id DESC";
+        $query = $em->createQuery($dql);
+
+        $paginator = $this->get('knp_paginator');
+        $likes = $paginator->paginate(
+            $query,
+            $request->query->getInt('page',1),
+            5
+        );
+
+        return $this->render('AppBundle:Like:likes.html.twig',array(
+            'user' => $user,
+            'likes' => $likes
+        ));
     }
 }

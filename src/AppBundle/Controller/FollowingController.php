@@ -77,5 +77,85 @@ class FollowingController extends Controller
     }
 
 
+    /**
+     * @Route("/users/{nickname}/following",
+     *     options = { "expose" = true },
+     *     name="following_users")
+     */
+    public function followingAction(Request $request, $nickname = null){
+        $em = $this->getDoctrine()->getManager();
+        if($nickname != null){
+            $user_repository = $em->getRepository('BackendBundle:User');
+            $user = $user_repository->findOneBy(array(
+                'nick' => $nickname
+            ));
+        }else{
+            $user = $this->getUser();
+        }
+
+        if(empty($user) || !is_object($user)){
+            return $this->redirect($this->generateUrl('home'));
+        }
+
+        $user_id = $user->getId();
+
+        $dql = "SELECT f FROM BackendBundle:Following f WHERE f.user = $user_id ORDER BY f.id DESC";
+        $query = $em->createQuery($dql);
+
+        $paginator = $this->get('knp_paginator');
+        $following_users = $paginator->paginate(
+            $query,
+            $request->query->getInt('page',1),
+            5
+        );
+
+        return $this->render('AppBundle:Following:following.html.twig',array(
+            'type' => 'following',
+            'profile_user' => $user,
+            'users' => $following_users
+        ));
+    }
+
+
+    /**
+     * @Route("/users/{nickname}/is_followed",
+     *     options = { "expose" = true },
+     *     name="follows_users")
+     */
+    public function followsAction(Request $request, $nickname = null){
+        $em = $this->getDoctrine()->getManager();
+        if($nickname != null){
+            $user_repository = $em->getRepository('BackendBundle:User');
+            $user = $user_repository->findOneBy(array(
+                'nick' => $nickname
+            ));
+        }else{
+            $user = $this->getUser();
+        }
+
+        if(empty($user) || !is_object($user)){
+            return $this->redirect($this->generateUrl('home'));
+        }
+
+        $user_id = $user->getId();
+
+        $dql = "SELECT f FROM BackendBundle:Following f WHERE f.followed = $user_id ORDER BY f.id DESC";
+        $query = $em->createQuery($dql);
+
+        $paginator = $this->get('knp_paginator');
+        $follows_users = $paginator->paginate(
+            $query,
+            $request->query->getInt('page',1),
+            5
+        );
+
+        return $this->render('AppBundle:Following:following.html.twig',array(
+            'type' => 'follows',
+            'profile_user' => $user,
+            'users' => $follows_users
+        ));
+    }
+
+
 
 }

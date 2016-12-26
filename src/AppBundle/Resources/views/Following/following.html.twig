@@ -10,15 +10,35 @@
 {% block content %}
     <div class="container">
         <div class=" col-lg-12 box-default">
-            <h1>Gente que quizás conoces</h1>
+            {% if type == 'following' %}
+                {% if app.user.id == profile_user.id%}
+                    <h1 class="box-header">Gente a la que sigues</h1>
+                {% else %}
+                    <h1 class="box-header">Gente a la que sigue <a href="{{ path('user_profile',{'nickname':profile_user.nick}) }}">{{ profile_user.nick }}</a></h1>
+                {% endif %}
+            {% else %}
+                {% if app.user.id == profile_user.id%}
+                    <h1 class="box-header">Gente que te sigue</h1>
+                {% else %}
+                    <h1 class="box-header">Gente siguiendo a <a href="{{ path('user_profile',{'nickname':profile_user.nick}) }}">{{ profile_user.nick }}</a></h1>
+                {% endif %}
+            {% endif %}
             <div class="count">
                 <span class="label label-primary">
-                     Total de personas: {{ pagination.getTotalItemCount }}
+                     Total de personas: {{ users.getTotalItemCount }}
                 </span>
             </div>
             <hr/>
             <div class="box-content box-users">
-                {% for user in pagination %}
+                {% for following_user in users %}
+
+
+                    {% if type == 'following' %}
+                        {% set user = following_user.followed %}
+                    {% else %}
+                        {% set user = following_user.user %}
+                    {% endif %}
+
                     <div class="col-lg-12 user-item">
                         <div class="avatar">
                             {% if user.image == null %}
@@ -60,7 +80,7 @@
                 {% endfor %}
             </div>
             <div class="navigation">
-                {{ knp_pagination_render(pagination) }}
+                {{ knp_pagination_render(users) }}
             </div>
             <div class="clearfix"></div>
 

@@ -214,4 +214,42 @@ class UserController extends Controller
 
     }
 
+    /**
+     * @Route("/users/{nickname}",
+     *     options = { "expose" = true },
+     *     name="user_profile")
+     */
+    public function userProfileAction(Request $request, $nickname = null){
+        $em = $this->getDoctrine()->getManager();
+        if($nickname != null){
+            $user_repository = $em->getRepository('BackendBundle:User');
+            $user = $user_repository->findOneBy(array(
+                'nick' => $nickname
+            ));
+        }else{
+            $user = $this->getUser();
+        }
+
+        if(empty($user) || !is_object($user)){
+            return $this->redirect($this->generateUrl('home'));
+        }
+
+        $user_id = $user->getId();
+
+        $dql = "SELECT p FROM BackendBundle:Publication p WHERE p.user = $user_id ORDER BY p.id DESC";
+        $query = $em->createQuery($dql);
+
+        $paginator = $this->get('knp_paginator');
+        $publications = $paginator->paginate(
+            $query,
+            $request->query->getInt('page',1),
+            5
+        );
+
+        return $this->render('AppBundle:User:profile.html.twig',array(
+            'user' => $user,
+            'publications' => $publications
+        ));
+    }
+
 }
