@@ -41,7 +41,8 @@ class FollowingController extends Controller
         $following->setFollowed($user_followed);
         $em->persist($following);
         $em->flush();
-
+        $notification = $this->get('app.notification_service');
+        $notification->set($user_followed, 'following', $user->getId());
         $status = "¡Siguiendo a usuario!";
 
         return new Response($status );

@@ -1,0 +1,31 @@
+{% extends "AppBundle:Layouts:layout.html.twig" %}
+{% block javascripts %}
+    {{ parent() }}
+    <script>
+        var loader = "{{ asset('assets/images/ajax-loader.gif') }}"
+    </script>
+    <!--<script src="{{ asset('assets/js/customJS/publicationsJS.js') }}"></script>-->
+{% endblock %}
+{% block content %}
+    <div class="container">
+        <div class="col-lg-12 box-default box-notifications">
+            <h1 class="box-header">Tus notificaciones</h1>
+            <div class="box-content">
+                {% for notification in notifications %}
+                    <div class="col-lg-12 notification-item">
+                        <div class="alert alert-dismissible">
+                            <span class="glyphicon glyphicon-info-sign" aria-hidden="true"></span>
+                            {% set notification_user = notification.typeId|get_user %}
+                            {% if notification.type=="following" %}
+                                <a href="{{ path('user_profile',{'nickname': notification_user.nick}) }}">{{ notification_user.name }} {{ notification_user.surname }}</a> te está siguiendo.
+                            {% elseif notification.type == "like" %}
+                                <a href="{{ path('user_profile',{'nickname': notification_user.nick}) }}">{{ notification_user.name }} {{ notification_user.surname }}</a> le ha dado me gusta a una de tus publicaciones.
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+                <div class="clearfix"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

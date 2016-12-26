@@ -26,6 +26,9 @@ class LikeController extends Controller
 
         $em->persist($like);
         $em->flush();
+
+        $notification = $this->get('app.notification_service');
+        $notification->set($publication->getUser(), 'like', $user->getId(), $publication->getId() );
         $status = '¡Like a publicacion!';
         return new Response($status);
     }
